@@ -2,20 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Dashboard from '../Pages/Dashboard/Dashboard';
 
 const HeaderWithSidebar = ({ children }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Handle scroll event
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setIsScrolled(scrollTop > 100);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // Remove the scroll effect for sidebar shrinking
+  // We'll only keep the manual toggle functionality
 
   // Toggle sidebar collapse state
   const toggleSidebar = () => {
@@ -38,23 +29,19 @@ const HeaderWithSidebar = ({ children }) => {
     { id: 12, name: 'Settings', icon: '⚙️', href: '#' },
   ];
 
-  // Determine sidebar width based on states
+  // Determine sidebar width based on toggle state only
   const getSidebarWidth = () => {
-    if (isSidebarCollapsed || isScrolled) return 'w-20';
-    return 'w-64';
+    return isSidebarCollapsed ? 'w-20' : 'w-64';
   };
 
   const getMainContentMargin = () => {
-    if (isSidebarCollapsed || isScrolled) return 'lg:ml-20';
-    return 'lg:ml-64';
+    return isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64';
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 bg-white shadow-md z-40 transition-all duration-300 ${
-        isScrolled ? 'py-2' : 'py-4'
-      }`}>
+      {/* Header - Fixed at top */}
+      <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-40 py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* Sidebar Toggle Button for Desktop */}
@@ -71,9 +58,7 @@ const HeaderWithSidebar = ({ children }) => {
               <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
-              <h1 className={`font-bold text-gray-800 transition-all duration-300 ${
-                isScrolled ? 'text-xl' : 'text-2xl'
-              }`}>
+              <h1 className="text-2xl font-bold text-gray-800">
                 School Management
               </h1>
             </div>
@@ -96,17 +81,17 @@ const HeaderWithSidebar = ({ children }) => {
       </header>
 
       {/* Main Content */}
-      <div className="flex pt-16">
-        {/* Sidebar */}
+      <div className="flex pt-16 h-screen">
+        {/* Sidebar - Fixed and non-scrollable */}
         <aside className={`
           fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white shadow-lg z-30 
-          transition-all duration-300 ease-in-out overflow-y-auto
+          transition-all duration-300 ease-in-out
           ${getSidebarWidth()}
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}>
           {/* Sidebar Content */}
-          <div className="p-4">
+          <div className="p-4 h-full flex flex-col">
             {/* Toggle Button for Mobile */}
             <button
               onClick={() => setIsSidebarOpen(false)}
@@ -130,8 +115,8 @@ const HeaderWithSidebar = ({ children }) => {
               </button>
             </div>
 
-            {/* Navigation Menu */}
-            <nav className="mt-4">
+            {/* Navigation Menu - Scrollable if needed */}
+            <nav className="flex-1 overflow-y-auto">
               <ul className="space-y-2">
                 {menuItems.map((item) => (
                   <li key={item.id}>
@@ -139,17 +124,17 @@ const HeaderWithSidebar = ({ children }) => {
                       href={item.href}
                       className={`
                         flex items-center space-x-3 p-3 rounded-lg transition-all duration-200
-                        hover:bg-blue-50 hover:text-blue-600 text-gray-700 group
-                        ${(isSidebarCollapsed || isScrolled) ? 'justify-center' : ''}
+                        hover:bg-blue-50 hover:text-blue-600 text-gray-700 group relative
+                        ${isSidebarCollapsed ? 'justify-center' : ''}
                       `}
-                      title={(isSidebarCollapsed || isScrolled) ? item.name : ''}
+                      title={isSidebarCollapsed ? item.name : ''}
                     >
                       <span className="text-xl">{item.icon}</span>
-                      {!(isSidebarCollapsed || isScrolled) && (
+                      {!isSidebarCollapsed && (
                         <span className="font-medium">{item.name}</span>
                       )}
                       {/* Tooltip for collapsed state */}
-                      {(isSidebarCollapsed || isScrolled) && (
+                      {isSidebarCollapsed && (
                         <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
                           {item.name}
                         </div>
@@ -160,9 +145,9 @@ const HeaderWithSidebar = ({ children }) => {
               </ul>
             </nav>
 
-            {/* Additional Info (only show when not collapsed/scrolled) */}
-            {!(isSidebarCollapsed || isScrolled) && (
-              <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+            {/* Additional Info (only show when not collapsed) */}
+            {!isSidebarCollapsed && (
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-semibold text-gray-800 mb-2">Quick Stats</h3>
                 <div className="space-y-2 text-sm text-gray-600">
                   <div>Students: 1,250</div>
@@ -174,9 +159,9 @@ const HeaderWithSidebar = ({ children }) => {
           </div>
         </aside>
 
-        {/* Main Content Area */}
+        {/* Main Content Area - Scrollable */}
         <main className={`
-          flex-1 transition-all duration-300 ease-in-out min-h-screen w-full
+          flex-1 transition-all duration-300 ease-in-out h-full overflow-auto
           ${getMainContentMargin()}
           ${isSidebarOpen ? 'ml-0' : 'ml-0'}
         `}>
@@ -188,8 +173,8 @@ const HeaderWithSidebar = ({ children }) => {
             ☰
           </button>
 
-          {/* Page Content - Dashboard takes full remaining space */}
-          <div className="w-full h-full">
+          {/* Page Content - Dashboard takes full remaining space and is scrollable */}
+          <div className="w-full min-h-full">
             <Dashboard />
           </div>
         </main>

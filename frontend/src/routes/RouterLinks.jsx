@@ -10,7 +10,7 @@ export const privateRoutes = [
 
 ];
 
-export const publicRoutes = [
-  {icon:"home",path:"/",component:<Navigate to={allRoutes.login} replace />},
-  {icon:"login",path:allRoutes.login,component:<Login/>}
-];
+// export const publicRoutes = [
+//   {icon:"home",path:"/",component:<Navigate to={allRoutes.login} replace />},
+//   {icon:"login",path:allRoutes.login,component:<Login/>}
+// ];
