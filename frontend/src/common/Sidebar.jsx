@@ -5,25 +5,27 @@ import { Link, useLocation } from "react-router-dom";
 import awnLogo from "../assets/react.svg";
 import toggleIcon from "../assets/react.svg";
 import accountSettings from "../assets/react.svg";
+import { privateRoutes } from "../routes/RouterLinks";
+import { sidebarData } from "../routes/SidebarData";
 
-const sidebarData = [
-  {
-    title: "Dashboard",
-    alwaysExpanded: false,
-    menuList: [
-      { label: "Home", link: "/home", icon: toggleIcon, iconActive: toggleIcon },
-      { label: "Reports", link: "/reports", icon: toggleIcon, iconActive: toggleIcon },
-    ],
-  },
-  {
-    title: "Management",
-    alwaysExpanded: false,
-    menuList: [
-      { label: "Users", link: "/users", icon: toggleIcon, iconActive: toggleIcon },
-      { label: "Tickets", link: "/tickets", icon: toggleIcon, iconActive: toggleIcon },
-    ],
-  },
-];
+// const sidebarData = [
+//   {
+//     title: "Dashboard",
+//     alwaysExpanded: false,
+//     menuList: [
+//       { label: "Home", link: "/home", icon: toggleIcon, iconActive: toggleIcon },
+//       { label: "Reports", link: "/reports", icon: toggleIcon, iconActive: toggleIcon },
+//     ],
+//   },
+//   {
+//     title: "Management",
+//     alwaysExpanded: false,
+//     menuList: [
+//       { label: "Users", link: "/users", icon: toggleIcon, iconActive: toggleIcon },
+//       { label: "Tickets", link: "/tickets", icon: toggleIcon, iconActive: toggleIcon },
+//     ],
+//   },
+// ];
 
 const Sidebar = ({ toggleSidebar, isCollapsed }) => {
   const location = useLocation();
@@ -87,15 +89,15 @@ const Sidebar = ({ toggleSidebar, isCollapsed }) => {
             {(!isCollapsed && expandedSections[section.title] !== false) &&
               section.menuList.map((item) => (
                 <Link
-                  key={item.link}
-                  to={item.link}
+                  key={item.path}
+                  to={item.path}
                   className={`flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-100 transition ${
-                    basePath === item.link.split("/")[1] ? "bg-blue-100 font-medium" : ""
+                    basePath === item.path.split("/")[1] ? "bg-blue-100 font-medium" : ""
                   }`}
                 >
                   <img
                     src={
-                      basePath === item.link.split("/")[1] ? item.iconActive : item.icon
+                      basePath === item.path.split("/")[1] ? item.iconActive : item.icon
                     }
                     alt="icon"
                     className="w-5 h-5"
